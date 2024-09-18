@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "563751382087",
+    "project_id": "botox-dfb14",
+    "storage_bucket": "botox-dfb14.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563751382087:android:646a6b35021d722c361562",
+        "android_client_info": {
+          "package_name": "com.destructo.botox"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAe916hmdEgEWZ3H8ARsSpF4gmLL6m-Fo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
