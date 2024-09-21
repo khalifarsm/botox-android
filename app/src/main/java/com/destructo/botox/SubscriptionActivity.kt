@@ -25,9 +25,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
+
 
 class SubscriptionActivity : AppCompatActivity() {
 
@@ -131,6 +133,7 @@ class SubscriptionActivity : AppCompatActivity() {
 
     // Firebase Cloud Messaging token'ı al
     private fun getFcmToken() {
+
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
                 Log.w("SubscriptionActivity", "FCM token alma işlemi başarısız oldu", task.exception)
@@ -141,6 +144,8 @@ class SubscriptionActivity : AppCompatActivity() {
             fcmToken = task.result
             Log.d("SubscriptionActivity", "FCM Token: $fcmToken")
         })
+
+
     }
 
     private fun validateInputs(subscriptionCode: String, resetCode: String, resetCodeConfirm: String): Boolean {
@@ -154,6 +159,7 @@ class SubscriptionActivity : AppCompatActivity() {
         }
         return true
     }
+
 
     private fun generateHash(resetCode: String): String {
         return try {
@@ -172,53 +178,53 @@ class SubscriptionActivity : AppCompatActivity() {
         }
     }
 
-    private fun registerUser(subscriptionCode: String, resetCodeHash: String, password: String, fcmToken: String) {
-        val requestBody = JsonObject().apply {
-            addProperty("subscription", subscriptionCode)
-            addProperty("reset", resetCodeHash)
-            addProperty("password", password)
-            addProperty("token", fcmToken)  // Gerçek FCM token'ı kullan
+private fun registerUser(subscriptionCode: String, resetCodeHash: String, password: String, fcmToken: String) {
+    val requestBody = JsonObject().apply {
+        addProperty("subscription", subscriptionCode)
+        addProperty("reset", resetCodeHash)
+        addProperty("password", password)
+        addProperty("token", fcmToken)  // Gerçek FCM token'ı kullan
+    }
+
+    val call = apiService.registerUser(requestBody)
+    call.enqueue(object : Callback<JsonObject> {
+        override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+            if (response.isSuccessful) {
+                val responseBody = response.body()
+                val userId = responseBody?.get("userId")?.asString
+
+                saveToSharedPreferences(subscriptionCode, resetCodeHash, password, fcmToken, userId)
+
+                // UserIDActivity'yi başlat
+                val intent = Intent(this@SubscriptionActivity, UserIDActivity::class.java)
+                startActivity(intent)
+                finish() // SubscriptionActivity'yi kapat
+            } else {
+                Toast.makeText(this@SubscriptionActivity, "API Error: ${response.message()}", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        val call = apiService.registerUser(requestBody)
-        call.enqueue(object : Callback<JsonObject> {
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    val userId = responseBody?.get("userId")?.asString
-
-                    saveToSharedPreferences(subscriptionCode, resetCodeHash, password, fcmToken, userId)
-
-                    // UserIDActivity'yi başlat
-                    val intent = Intent(this@SubscriptionActivity, UserIDActivity::class.java)
-                    startActivity(intent)
-                    finish() // SubscriptionActivity'yi kapat
-                } else {
-                    Toast.makeText(this@SubscriptionActivity, "API Error: ${response.message()}", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                Toast.makeText(this@SubscriptionActivity, "API Call Failed: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
-    private fun saveToSharedPreferences(subscriptionCode: String, resetCodeHash: String, password: String, fcmToken: String, userId: String?) {
-        val sharedPreferences = getSharedPreferences("com.destructo.botox.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE)
-        with(sharedPreferences.edit()) {
-            putString("subscriptionCode", subscriptionCode)
-            putString("resetCodeHash", resetCodeHash)
-            putString("password", password)
-            putString("fcmToken", fcmToken)
-            putString("userId", userId)
-            apply()
+        override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+            Toast.makeText(this@SubscriptionActivity, "API Call Failed: ${t.message}", Toast.LENGTH_SHORT).show()
         }
-    }
+    })
+}
 
-    interface ApiService {
-        @Headers("Content-Type: application/json")
-        @POST("register")
-        fun registerUser(@Body requestBody: JsonObject): Call<JsonObject>
+private fun saveToSharedPreferences(subscriptionCode: String, resetCodeHash: String, password: String, fcmToken: String, userId: String?) {
+    val sharedPreferences = getSharedPreferences("com.destructo.botox.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE)
+    with(sharedPreferences.edit()) {
+        putString("subscriptionCode", subscriptionCode)
+        putString("resetCodeHash", resetCodeHash)
+        putString("password", password)
+        putString("fcmToken", fcmToken)
+        putString("userId", userId)
+        apply()
     }
+}
+
+interface ApiService {
+    @Headers("Content-Type: application/json")
+    @POST("register")
+    fun registerUser(@Body requestBody: JsonObject): Call<JsonObject>
+}
 }

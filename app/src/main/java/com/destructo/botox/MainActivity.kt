@@ -31,8 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
 
-        val serviceIntent = Intent(this, MyForegroundService::class.java)
-        startService(serviceIntent)
+
 
         // Daha önce gösterildi mi kontrol et
         val isFirstLaunch = sharedPreferences.getBoolean("isFirstLaunch", true)

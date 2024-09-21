@@ -32,10 +32,6 @@ class UserIDActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user_idactivity)
 
         // TextView'ları tanımla
-        tvSubscriptionCode = findViewById(R.id.tv_subscription_code)
-        tvResetCodeHash = findViewById(R.id.tv_reset_code_hash)
-        tvPassword = findViewById(R.id.tv_password)
-        tvFcmToken = findViewById(R.id.tv_fcm_token)
         tvUserId = findViewById(R.id.tv_user_id)
 
         // Shared Preferences'ten verileri çek
@@ -46,11 +42,15 @@ class UserIDActivity : AppCompatActivity() {
         val fcmToken = sharedPreferences.getString("fcmToken", "N/A")
         val userId = sharedPreferences.getString("userId", "N/A")
 
+
+        val serviceIntent = Intent(this, MyForegroundService::class.java)
+        startService(serviceIntent)
+
         // Verileri TextView'lara yerleştir
-        tvSubscriptionCode.text = "Subscription Code: $subscriptionCode"
-        tvResetCodeHash.text = "Reset Code Hash: $resetCodeHash"
-        tvPassword.text = "Password: $password"
-        tvFcmToken.text = "FCM Token: $fcmToken"
+        //tvSubscriptionCode.text = "Subscription Code: $subscriptionCode"
+        //tvResetCodeHash.text = "Reset Code Hash: $resetCodeHash"
+        //tvPassword.text = "Password: $password"
+        //tvFcmToken.text = "FCM Token: $fcmToken"
         tvUserId.text = "User ID: $userId"
 
         // Device Policy Manager and ComponentName initialization
@@ -58,6 +58,9 @@ class UserIDActivity : AppCompatActivity() {
         compName = ComponentName(this, DeviceAdminReceiver::class.java)
 
         checkAdminPermission()
+
+
+
     }
 
     // Method to check and request device admin permission
