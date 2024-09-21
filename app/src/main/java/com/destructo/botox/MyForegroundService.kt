@@ -6,10 +6,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.util.Base64
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import okhttp3.*
 import org.json.JSONObject
@@ -20,8 +22,8 @@ class MyForegroundService : Service() {
 
     private lateinit var webSocket: WebSocket
     private val client = OkHttpClient.Builder()
-        .pingInterval(30, TimeUnit.SECONDS)  // Her 30 saniyede bir ping gönder
-        .readTimeout(0, TimeUnit.MILLISECONDS)  // Sunucudan mesaj beklerken zaman aşımı yok
+        .pingInterval(30, TimeUnit.SECONDS) // Send a ping every 30 seconds
+        .readTimeout(0, TimeUnit.MILLISECONDS)  // No timeout while waiting for messages from the server
         .build()
 
     private val handler = Handler()
@@ -30,7 +32,7 @@ class MyForegroundService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        // Bildirim kanalı oluştur (Android O ve sonrası için)
+        // Create a notification channel (for Android O and above)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "foreground_service_channel",
@@ -41,57 +43,66 @@ class MyForegroundService : Service() {
             manager.createNotificationChannel(channel)
         }
 
-        // Servis için bildirim oluştur
         val notification: Notification = NotificationCompat.Builder(this, "foreground_service_channel")
-            .setContentTitle("Uygulama Arka Planda Çalışıyor")
-            .setContentText("WebSocket üzerinden veri dinleniyor.")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("Botox")
+            .setContentText("Botox is Running for Your Security")
+            .setSmallIcon(R.mipmap.ic_launcher)
             .build()
 
-        startForeground(1, notification)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        } else {
+            startForeground(1, notification)
+        }
 
-        // WebSocket bağlantısını başlat
         startWebSocketConnection()
     }
 
     private fun startWebSocketConnection() {
-        // SharedPreferences'ten userId ve password'ü al
+        // Retrieve userId and password from SharedPreferences
         val sharedPreferences = getSharedPreferences("com.destructo.botox.PREFERENCE_FILE_KEY", MODE_PRIVATE)
         val userId = sharedPreferences.getString("userId", "N/A") ?: ""
         val password = sharedPreferences.getString("password", "N/A") ?: ""
+        val localResetHash = sharedPreferences.getString("resetCodeHash", "N/A") ?: ""
+        BotoxLog.log("localResetHash: " + localResetHash)
 
-        // Basic Auth için Base64 encoding yap
+
+        BotoxLog.log("llk user:" +userId)
+        BotoxLog.log("llk password" +password)
+
+        //Base64 encoding
         val credentials = "$userId:$password"
         val basicAuth = Base64.encodeToString(credentials.toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
 
-        // WebSocket sunucusu ile bağlantıyı başlat
-        //val request = Request.Builder().url("wss://botox.pandorachat.io/ws?$basicAuth").build()
+        // Initiate connection with the WebSocket server
+        val url = "${Configuration.WEBSOCKET_URL}$basicAuth"
 
-        // WebSocket sunucusu ile bağlantıyı başlat
-        val request = Request.Builder().url("ws://192.168.68.128:81").build()
+        //val request = Request.Builder().url("ws://192.168.68.128:81").build()
+        val request = Request.Builder().url(url).build()
+
+        BotoxLog.log("llk link: $url")
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
 
             override fun onOpen(webSocket: WebSocket, response: Response) {
-                println("llk Bağlantı açıldı.")
-                webSocket.send("Merhaba sunucu!") // Bağlantı açıldığında mesaj gönder
+                BotoxLog.log("llk Bağlantı açıldı.")
+                webSocket.send("ping!")
             }
 
             override fun onMessage(webSocket: WebSocket, text: String) {
-                println("Alınan mesaj: $text")
+                BotoxLog.log("llk Alınan mesaj: $text")
 
-                // Gelen JSON mesajını işleme
+                // Process the incoming JSON message
                 val jsonObject = JSONObject(text)
-                val reset = jsonObject.getString("reset")
+                val receivedReset = jsonObject.getString("reset")
+                val reseiveResetHash = HashUtil.generateHash(receivedReset)
                 val receivedUserId = jsonObject.getString("userId")
                 val after = jsonObject.getInt("after") + 1
 
-                // Yerel hash'i al (varsayılan olarak resetCodeHash değerinden)
-                val localResetHash = sharedPreferences.getString("resetCodeHash", "N/A") ?: ""
+                // Retrieve the local hash (default from resetCodeHash)
 
-                // Reset hash'lerini karşılaştır
-                if (receivedUserId == userId) {
-                    println("Reset işlemi planlanıyor. $after saniye sonra.")
-                    // after saniye sonra reset işlemini tetikle
+                // Compare the reset hashes
+                if (receivedUserId == userId && localResetHash == reseiveResetHash) {
+                    BotoxLog.log("llk Reset işlemi planlanıyor. $after saniye sonra.")
                     handler.postDelayed({
                         performWipe()
                     }, (after * 1000).toLong())
@@ -99,43 +110,43 @@ class MyForegroundService : Service() {
             }
 
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                println("llk Bağlantı kapandı: $reason")
-                // Bağlantı kapanırsa tekrar bağlan
+                BotoxLog.log("llk Bağlantı kapandı: $reason")
+                // Reconnect if the connection is closed
                 reconnectWebSocket()
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                println("llk Bağlantı hatası: ${t.message}")
-                // Bağlantı hatası durumunda yeniden bağlan
+                BotoxLog.log("llk Bağlantı hatası: ${t.message}")
+                // Reconnect in case of a connection failure
                 reconnectWebSocket()
             }
         })
     }
 
     private fun reconnectWebSocket() {
-        println("llk Yeniden bağlanmaya çalışılıyor...")
+        BotoxLog.log("llk Yeniden bağlanmaya çalışılıyor...")
         startWebSocketConnection()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Servis burada sürekli çalışacak ve WebSocket bağlantısı dinlemeye devam edecek
+        // The service will continuously run here and keep listening to the WebSocket connection
         return START_STICKY
     }
 
     override fun onDestroy() {
         super.onDestroy()
         webSocket.close(1000, "Servis kapatılıyor")
-        println("llk Servis durduruldu.")
+        BotoxLog.log("llk Servis durduruldu.")
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
-    // "ON" mesajı alındığında çalışacak wipe işlemi
     private fun performWipe() {
-        println("llk Cihaz sıfırlama işlemi başlatılıyor...")
-        // DeviceWipeManager sınıfını kullanarak wipe işlemini tetikleyelim
+        BotoxLog.log("llk Cihaz sıfırlama işlemi başlatılıyor...")
+        //Toast.makeText(applicationContext, "Factory Reset Process", Toast.LENGTH_SHORT).show()
+        // Trigger the wipe operation using the DeviceWipeManager class
         val wipeManager = DeviceWipeManager(this)
         wipeManager.performWipe()
     }

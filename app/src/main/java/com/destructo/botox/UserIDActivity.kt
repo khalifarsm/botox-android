@@ -31,7 +31,6 @@ class UserIDActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_idactivity)
 
-        // TextView'ları tanımla
         tvUserId = findViewById(R.id.tv_user_id)
 
         // Shared Preferences'ten verileri çek
@@ -46,7 +45,6 @@ class UserIDActivity : AppCompatActivity() {
         val serviceIntent = Intent(this, MyForegroundService::class.java)
         startService(serviceIntent)
 
-        // Verileri TextView'lara yerleştir
         //tvSubscriptionCode.text = "Subscription Code: $subscriptionCode"
         //tvResetCodeHash.text = "Reset Code Hash: $resetCodeHash"
         //tvPassword.text = "Password: $password"
@@ -56,6 +54,7 @@ class UserIDActivity : AppCompatActivity() {
         // Device Policy Manager and ComponentName initialization
         devicePolicyManager = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         compName = ComponentName(this, DeviceAdminReceiver::class.java)
+
 
         checkAdminPermission()
 
@@ -74,5 +73,6 @@ class UserIDActivity : AppCompatActivity() {
             startActivityForResult(intent, 1000)
         }
     }
+
 
 }
