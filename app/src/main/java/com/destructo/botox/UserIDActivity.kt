@@ -58,6 +58,11 @@ class UserIDActivity : AppCompatActivity() {
 
         checkAdminPermission()
 
+        val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, compName)
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "This app needs device admin permissions to wipe data.")
+        startActivity(intent)
+
 
 
     }
