@@ -31,11 +31,6 @@ class UserIDActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_idactivity)
 
-        // TextView'ları tanımla
-        tvSubscriptionCode = findViewById(R.id.tv_subscription_code)
-        tvResetCodeHash = findViewById(R.id.tv_reset_code_hash)
-        tvPassword = findViewById(R.id.tv_password)
-        tvFcmToken = findViewById(R.id.tv_fcm_token)
         tvUserId = findViewById(R.id.tv_user_id)
 
         // Shared Preferences'ten verileri çek
@@ -46,18 +41,30 @@ class UserIDActivity : AppCompatActivity() {
         val fcmToken = sharedPreferences.getString("fcmToken", "N/A")
         val userId = sharedPreferences.getString("userId", "N/A")
 
-        // Verileri TextView'lara yerleştir
-        tvSubscriptionCode.text = "Subscription Code: $subscriptionCode"
-        tvResetCodeHash.text = "Reset Code Hash: $resetCodeHash"
-        tvPassword.text = "Password: $password"
-        tvFcmToken.text = "FCM Token: $fcmToken"
+
+        val serviceIntent = Intent(this, MyForegroundService::class.java)
+        startService(serviceIntent)
+
+        //tvSubscriptionCode.text = "Subscription Code: $subscriptionCode"
+        //tvResetCodeHash.text = "Reset Code Hash: $resetCodeHash"
+        //tvPassword.text = "Password: $password"
+        //tvFcmToken.text = "FCM Token: $fcmToken"
         tvUserId.text = "User ID: $userId"
 
         // Device Policy Manager and ComponentName initialization
         devicePolicyManager = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
         compName = ComponentName(this, DeviceAdminReceiver::class.java)
 
+
         checkAdminPermission()
+
+        val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, compName)
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "This app needs device admin permissions to wipe data.")
+        startActivity(intent)
+
+
+
     }
 
     // Method to check and request device admin permission
@@ -71,5 +78,6 @@ class UserIDActivity : AppCompatActivity() {
             startActivityForResult(intent, 1000)
         }
     }
+
 
 }
