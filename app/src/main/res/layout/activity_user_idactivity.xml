@@ -1,46 +1,83 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="#FFFFFF"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
 
     <!-- Arka plan resmi -->
     <ImageView
         android:id="@+id/background_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/profile"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="Profile background image"
         android:padding="16dp"
-        android:contentDescription="Profile background image" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/profile" />
+
+    <!-- Info simgesi -->
 
     <!-- User ID TextView'ini alt ortada göstermek -->
+    <TextView
+        android:id="@+id/tv_user_congrats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="#80FFFFFF"
+        android:padding="16dp"
+        android:text="Congrats!"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="50sp"
+        android:textStyle="bold" />
+
     <TextView
         android:id="@+id/tv_user_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="User ID"
-        android:textSize="24sp"
-        android:textColor="@android:color/holo_blue_light"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:padding="16dp"
+        android:layout_below="@+id/tv_user_congrats"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="0dp"
         android:background="#80FFFFFF"
-        android:layout_marginBottom="60dp"
+        android:text="User ID"
+        android:textAlignment="center"
+        android:textColor="#619EB5"
+        android:textSize="24sp"
         android:textStyle="bold" />
 
-    <!-- User ID TextView'ini alt ortada göstermek -->
+    <Button
+        android:id="@+id/btn_reset_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_user_id_desc"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="15dp"
+        android:background="@android:color/holo_blue_light"
+        android:padding="16dp"
+        android:text="How to Use?"
+        android:textColor="@android:color/white" />
+
     <TextView
         android:id="@+id/tv_user_id_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="You can use your User ID for the reset process."
-        android:textSize="12sp"
-        android:textColor="@android:color/holo_blue_light"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:padding="16dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="10dp"
         android:background="#80FFFFFF"
-        android:layout_marginBottom="10dp" />
+        android:padding="16dp"
+        android:text="Make sure you have noted down your User ID to be able to remotely reset your phone"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_blue_light"
+        android:textSize="12sp" />
 
 </RelativeLayout>

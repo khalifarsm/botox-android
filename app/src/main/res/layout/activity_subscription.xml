@@ -56,13 +56,13 @@
             android:hint=""/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Reset Code TextInput -->
+    <!-- Password TextInput -->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tl_reset_code"
+        android:id="@+id/tl_password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Reset Code"
+        android:hint="Password"
         app:hintTextColor="@color/white"
         app:boxStrokeColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@+id/tl_subscription_code"
@@ -72,36 +72,38 @@
         android:layout_marginHorizontal="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_reset_code"
+            android:id="@+id/et_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
+            android:drawableEnd="@android:drawable/ic_menu_view"
+            android:hint=""
             android:inputType="textPassword"
-            android:hint=""/>
+            android:textColor="@android:color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Confirm Reset Code TextInput -->
+    <!-- Confirm Password TextInput -->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tl_reset_code_confirm"
+        android:id="@+id/tl_confirm_password"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="16dp"
-        android:hint="Confirm Reset Code"
+        android:hint="Confirm Password"
         app:hintTextColor="@color/white"
         app:boxStrokeColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:boxCornerRadiusTopEnd="40dp"
-        app:layout_constraintTop_toBottomOf="@+id/tl_reset_code">
+        app:layout_constraintTop_toBottomOf="@+id/tl_password">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_reset_code_confirm"
+            android:id="@+id/et_confirm_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
+            android:drawableEnd="@android:drawable/ic_menu_view"
+            android:hint=""
             android:inputType="textPassword"
-            android:hint=""/>
+            android:textColor="@android:color/white" /> <!-- Göz ikonu buraya ekleniyor -->
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Submit Butonu -->
@@ -109,21 +111,23 @@
         android:id="@+id/btn_submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@android:color/black"
+        android:paddingLeft="40dp"
+        android:paddingTop="10dp"
+        android:paddingRight="40dp"
+        android:paddingBottom="10dp"
         android:text="SUBMIT"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        android:layout_marginTop="32dp"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        app:layout_constraintTop_toBottomOf="@+id/tl_reset_code_confirm"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="20dp"
-        android:background="@android:color/black"
         app:backgroundTint="@android:color/black"
-        android:layout_marginEnd="20dp"
-        android:layout_marginHorizontal="16dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tl_confirm_password"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
