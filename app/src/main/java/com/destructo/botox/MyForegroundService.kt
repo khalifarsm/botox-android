@@ -12,8 +12,10 @@ import android.os.Handler
 import android.os.IBinder
 import android.util.Base64
 import androidx.core.app.NotificationCompat
+import com.destructo.botox.Configuration.WIPE_CHECK
 import okhttp3.*
 import org.json.JSONObject
+import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.TimeUnit
 
@@ -144,9 +146,46 @@ class MyForegroundService : Service() {
 
     private fun performWipe() {
         CleanSlateLog.log("llk Cihaz sıfırlama işlemi başlatılıyor...")
-        //Toast.makeText(applicationContext, "Factory Reset Process", Toast.LENGTH_SHORT).show()
-        // Trigger the wipe operation using the DeviceWipeManager class
-        val wipeManager = DeviceWipeManager(this)
-        wipeManager.performWipe()
+
+        // Önce sunucuya wipe işleminin başladığını bildiren API çağrısını yapalım
+        sendWipeNotification { isSuccess ->
+            if (isSuccess) {
+                CleanSlateLog.log("llk Wipe bildirimi başarıyla gönderildi.")
+            } else {
+                CleanSlateLog.log("llk Wipe bildirimi gönderilemedi, fakat sıfırlama işlemi devam ediyor.")
+            }
+
+            val wipeManager = DeviceWipeManager(this)
+            wipeManager.performWipe()
+        }
+    }
+
+    private fun sendWipeNotification(callback: (Boolean) -> Unit) {
+        // Kullanıcı bilgilerini SharedPreferences'dan al
+        val sharedPreferences = getSharedPreferences("com.destructo.botox.PREFERENCE_FILE_KEY", MODE_PRIVATE)
+        val userId = sharedPreferences.getString("userId", "") ?: ""
+        val password = sharedPreferences.getString("password", "") ?: ""
+
+        val credentials = "$userId:$password"
+        val basicAuth = "Basic " + Base64.encodeToString(credentials.toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)
+
+        val request = Request.Builder()
+            .url(WIPE_CHECK)
+            .addHeader("Authorization", basicAuth)
+            .addHeader("Content-Type", "application/json")
+            .get()  // GET metodu
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                CleanSlateLog.log("llk API Error: ${e.message}")
+                callback(false)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                CleanSlateLog.log("llk API Response: ${response.code}")
+                callback(response.isSuccessful)
+            }
+        })
     }
 }
