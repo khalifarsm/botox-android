@@ -1,5 +1,8 @@
 name: Build and Publish Android App
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
