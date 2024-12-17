@@ -1,5 +1,8 @@
 name: Build and Publish Android App
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
@@ -19,11 +22,11 @@ jobs:
         uses: actions/checkout@v3
 
       # Set up JDK
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
 
       # Cache Gradle dependencies
       - name: Cache Gradle files
