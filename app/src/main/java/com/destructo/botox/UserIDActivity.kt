@@ -25,8 +25,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
-
 class UserIDActivity : AppCompatActivity() {
 
     //private lateinit var tvSubscriptionCode: TextView
