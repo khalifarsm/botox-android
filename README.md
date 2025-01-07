@@ -22,7 +22,7 @@ CleanSlate is an Android application designed to ensure user privacy and protect
 ## Usage
 
 1. install the app to your device and grant all priveleges required.
-2. use this subscription code to register XL6B27QY
+2. register your account
 3. save you user ID and password in a safe place.
 4. [In case of a lost or stolen device, initiate a wipe through the chosen trigger](https://cleanslate.mobi/reset).
 
