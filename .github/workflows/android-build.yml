@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: app-release-apk
-          path: app/build/outputs/apk/release/app-release.apk
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
 
   release:
     name: Create GitHub Release
@@ -69,4 +69,4 @@ jobs:
         with:
           tag: v1.0.${{ github.run_number }}
           name: Release v1.0.${{ github.run_number }}
-          files: ./artifact/app-release.apk
+          files: ./artifact/app-release-unsigned.apk
