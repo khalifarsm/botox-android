@@ -42,13 +42,18 @@ jobs:
       # Build the app
       - name: Build APK
         run: ./gradlew assembleRelease
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
 
       # Archive APK for next job
       - name: Upload APK artifact
         uses: actions/upload-artifact@v3
         with:
           name: app-release-apk
-          path: app/build/outputs/apk/release/app-release-unsigned.apk
+          path: app/build/outputs/apk/release/app-release.apk
 
   release:
     name: Create GitHub Release
@@ -69,4 +74,4 @@ jobs:
         with:
           tag: v1.0.${{ github.run_number }}
           name: Release v1.0.${{ github.run_number }}
-          artifacts: ./artifact/app-release-unsigned.apk
+          artifacts: ./artifact/app-release.apk
