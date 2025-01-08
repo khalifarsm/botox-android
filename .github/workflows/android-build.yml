@@ -43,11 +43,11 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleRelease
 
-      # Upload APK as a GitHub release asset
-      - name: Upload APK
+      # Archive APK for next job
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v3
         with:
-          name: app-release.apk
+          name: app-release-apk
           path: app/build/outputs/apk/release/app-release.apk
 
   release:
@@ -56,10 +56,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Create a release
+      # Download the APK artifact
+      - name: Download APK artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: app-release-apk
+          path: ./artifact
+
+      # Create a GitHub release and upload the APK
+      - name: Create a GitHub Release
         uses: ncipollo/release-action@v1
         with:
           tag: v1.0.${{ github.run_number }}
           name: Release v1.0.${{ github.run_number }}
-          artifacts: |
-            app/build/outputs/apk/release/app-release.apk
+          files: ./artifact/app-release.apk
