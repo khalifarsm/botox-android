@@ -1,4 +1,4 @@
-name: Build and Publish Android App
+name: Build and Publish Android Application
 
 permissions:
   contents: write
