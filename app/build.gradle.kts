@@ -21,7 +21,7 @@ android {
     signingConfigs {
         create("release") {
             storeFile = file("keystore-botox.jks")
-            storePassword = System.getenv("KEYSTORE_PASSWORD")
+            storePassword = System.getenv("KEYSTORE_PASSWORD") // Use consistent secrets
             keyAlias = System.getenv("KEY_ALIAS")
             keyPassword = System.getenv("KEY_PASSWORD")
         }
@@ -37,6 +37,12 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+
+    packagingOptions {
+        jniLibs.useLegacyPackaging = false // Normalize JNI lib packaging
+        resources.excludes.add("META-INF/**") // Exclude unnecessary metadata files
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -47,7 +53,6 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
@@ -56,15 +61,13 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
-
-    // Retrofit ve GSON dönüştürücüsü için bağımlılıklar
+    // Retrofit and GSON
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    // OkHttp ve Logging Interceptor için bağımlılıklar
+    // OkHttp and Logging Interceptor
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
 
     implementation("com.google.code.gson:gson:2.8.8")
-
 }
