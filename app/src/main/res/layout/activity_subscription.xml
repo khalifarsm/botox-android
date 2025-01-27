@@ -54,6 +54,18 @@
             android:inputType="text"
             android:textColor="@android:color/white"
             android:hint=""/>
+
+        <TextView
+            android:id="@+id/textViewLinkify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:layout_gravity="end"
+            android:layout_marginRight="0dp"
+            android:text="Get Subscription Code"
+            android:textColor="@android:color/holo_blue_dark"
+            android:textSize="16sp" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Password TextInput -->

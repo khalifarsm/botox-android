@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.PorterDuff
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -35,6 +37,7 @@ import kotlin.reflect.KMutableProperty0
 class SubscriptionActivity : AppCompatActivity() {
 
     private lateinit var etSubscriptionCode: EditText
+    private lateinit var tvLink: TextView
     private lateinit var etPassword: EditText
     private lateinit var etConfirmPassword: EditText
     private var isPasswordVisible = false
@@ -70,6 +73,7 @@ class SubscriptionActivity : AppCompatActivity() {
 
         apiService = retrofit.create(ApiService::class.java)
 
+        tvLink = findViewById(R.id.textViewLinkify)
         etSubscriptionCode = findViewById(R.id.et_subscription_code)
         etPassword = findViewById(R.id.et_password)
         etConfirmPassword = findViewById(R.id.et_confirm_password)
@@ -79,6 +83,11 @@ class SubscriptionActivity : AppCompatActivity() {
         setupPasswordVisibilityToggle(etConfirmPassword, ::isConfirmPasswordVisible)
         setEyeIconDefaultColor(etPassword)
         setEyeIconDefaultColor(etConfirmPassword)
+
+        tvLink.setOnClickListener {
+            val urlIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://cleanslate.mobi"))
+            startActivity(urlIntent)
+        }
 
 
         btnSubmit.setOnClickListener {

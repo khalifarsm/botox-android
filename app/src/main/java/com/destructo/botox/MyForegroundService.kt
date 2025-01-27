@@ -113,12 +113,14 @@ class MyForegroundService : Service() {
             override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                 CleanSlateLog.log("llk Bağlantı kapandı: $reason")
                 // Reconnect if the connection is closed
+                Thread.sleep(5000L)
                 reconnectWebSocket()
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                 CleanSlateLog.log("llk Bağlantı hatası: ${t.message}")
                 // Reconnect in case of a connection failure
+                Thread.sleep(60000L)
                 reconnectWebSocket()
             }
         })
