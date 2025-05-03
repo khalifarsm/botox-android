@@ -49,6 +49,7 @@ android {
     packagingOptions {
         jniLibs.useLegacyPackaging = false // Normalize JNI lib packaging
         resources.excludes.add("META-INF/**") // Exclude unnecessary metadata files
+        resources.excludes.add("DebugProbesKt.bin")
     }
 
     compileOptions {
