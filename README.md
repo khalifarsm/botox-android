@@ -2,6 +2,12 @@
 
 CleanSlate is an Android application designed to ensure user privacy and protect sensitive data. It allows users to remotely wipe their device in the unfortunate event of it being lost or stolen. With CleanSlate, your privacy is always in your hands.
 
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/com.destructo.botox/)
+
+Or download the latest APK from the [Releases Section](https://github.com/khalifarsm/botox-android/releases/latest).
+
 ## Features
 
 - **Remote Wipe:** Securely erase all data on your device remotely.
