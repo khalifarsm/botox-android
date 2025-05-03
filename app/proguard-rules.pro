@@ -21,3 +21,5 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class com.destructo.botox.Configuration { *; }
+-keep class org.bouncycastle.** { *; }
+-dontwarn org.bouncycastle.**
