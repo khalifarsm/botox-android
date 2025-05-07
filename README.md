@@ -44,6 +44,20 @@ CleanSlate requires the following permissions for full functionality:
 CleanSlate ensures your data is securely erased and inaccessible to unauthorized users. It does not store or share user data without consent.
 https://cleanslate.mobi/privacy
 
+## 🔒 Security Features
+
+| Feature | Status |
+|--------|--------|
+| **Implement a wipe token**: Each user should generate a local-only encrypted token during setup, used to validate remote wipe requests. This token is never stored on your server. | ✅ Complete |
+| **Strip debug metadata before production** (`minifyEnabled true` and remove `DebugProbesKt.bin`). | ✅ Complete |
+| **Make remote wipe command decryptable only by the app (client-side).** | ✅ Complete |
+| **Show clear user onboarding before enabling Device Admin, explaining its impact.** | ✅ Complete |
+| **Disable Firebase Analytics and tracking features in production.** <br> _Replaced with secure WebSocket._ | ✅ Complete |
+| **Provide an activity log within the app to show received remote commands.** | ✅ Complete |
+| **Use self-hosted FCM alternatives (like ntfy.sh) or open-source push systems if needed.** <br> _Replaced with secure WebSocket._ | ✅ Complete |
+| **Ensure app cannot silently wipe without visible confirmation unless explicitly set by user.** | ✅ Complete |
+
+
 ## Contributing
 
 Contributions are welcome! Follow these steps to contribute:
