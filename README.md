@@ -45,6 +45,7 @@ CleanSlate ensures your data is securely erased and inaccessible to unauthorized
 https://cleanslate.mobi/privacy
 
 ## 🔒 Security Features
+To enhance security, we have replaced Firebase FCM with secure WebSocket communication, implemented a wipe token system, ensured that remote wipe commands are decryptable only by the application, added advanced in-app logging for remote commands, and enforced user confirmation before any wipe action can be executed.
 
 | Feature | Status |
 |--------|--------|
